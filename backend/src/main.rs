@@ -176,8 +176,13 @@ async fn main() {
         .route("/verify", post(upload_csv))
         .layer(cors);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8081));
-    println!("Backend running on http://localhost:8081");
+    let port = std::env::var("PORT")
+    .unwrap_or_else(|_| "8081".to_string())
+    .parse::<u16>()
+    .unwrap();
+
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+    println!("Backend running on port {}", port);   
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
